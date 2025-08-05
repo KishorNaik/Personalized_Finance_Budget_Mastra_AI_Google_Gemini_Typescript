@@ -3,8 +3,10 @@ import { describe, it } from 'node:test';
 import { destroyDatabase, initializeDatabase } from '@kishornaik/db';
 import { CreateUserCommand, CreateUsersRequestDto } from '@/modules/users/apps/features/v1/createUsers';
 import { mediator } from '@/shared/utils/helpers/medaitR';
+import { ValidateEnv } from '@kishornaik/utils';
 
 process.env.NODE_ENV = 'development';
+ValidateEnv();
 
 describe(`Create-User-Unit-Test`, () => {
   // node --trace-deprecation --test --test-name-pattern='should_return_201_when_all_services_execute_successfully' --require ts-node/register -r tsconfig-paths/register ./src/modules/users/tests/features/v1/createUsers/index.test.ts
