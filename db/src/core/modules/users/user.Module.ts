@@ -6,3 +6,6 @@ export const userModulesEntityFederation:Function[]=[UserEntity,UserCredentialsE
 
 export * from "./infrastructures/entity/users/index";
 export * from "./infrastructures/entity/credentials/index";
+
+// Services
+export * from "./apps/features/v1/addUsers/index";
