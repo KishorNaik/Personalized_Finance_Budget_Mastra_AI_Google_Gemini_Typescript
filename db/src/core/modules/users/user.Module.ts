@@ -9,3 +9,6 @@ export * from "./infrastructures/entity/credentials/index";
 
 // Services
 export * from "./apps/features/v1/addUsers/index";
+export * from "./apps/features/v1/getUserByIdentifier/index";
+export * from "./apps/features/v1/getUserRowVersion/index";
+export *from "./apps/features/v1/updateUserRowVersion/index";
