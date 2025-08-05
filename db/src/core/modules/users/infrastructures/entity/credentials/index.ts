@@ -11,7 +11,7 @@ import { IsNotEmpty, IsString } from 'class-validator';
 import { BaseEntity } from '../../../../../shared/entity/base';
 import { UserEntity } from '../users';
 
-@Entity({ schema: `user`, name: `user` })
+@Entity({ schema: `user`, name: `credentials` })
 export class UserCredentialsEntity extends BaseEntity {
 	@Column(`varchar`, { length: 100, nullable: false })
 	@Index({ unique: true })
