@@ -1,8 +1,9 @@
-import { getQueryRunner } from "@kishornaik/db";
+import { getQueryRunner, UserEntity } from "@kishornaik/db";
 import { CleanUpWrapper, Container, GuardWrapper, IServiceHandlerAsync, IServiceHandlerVoidAsync, PipelineWorkflow, Result, ResultError, ResultFactory, sealed, Service, StatusEnum, TransactionsWrapper, VOID_RESULT, VoidResult } from "@kishornaik/utils";
 import { logger } from "../../../../../shared/utils/helpers/loggers";
 import { GetUserByIdentifierCacheService } from "./services/byIdentifier";
 import { NODE_ENV } from "../../../../../config/env";
+import { GetUserByEmailIdCacheService } from "./services/byEmail";
 
 export interface IUserSharedCacheServiceParameters{
   identifier:string;
@@ -24,9 +25,11 @@ export class UserSharedCacheService implements IUserSharedCacheService {
 
   private pipeline=new PipelineWorkflow(logger);
   private readonly _getUserByIdentifierCacheService:GetUserByIdentifierCacheService;
+  private readonly _getUserByEmailIdCacheService:GetUserByEmailIdCacheService;
 
   public constructor(){
     this._getUserByIdentifierCacheService=Container.get(GetUserByIdentifierCacheService);
+    this._getUserByEmailIdCacheService=Container.get(GetUserByEmailIdCacheService);
   }
 
   public async handleAsync(params: IUserSharedCacheServiceParameters): Promise<Result<VoidResult, ResultError>> {
@@ -58,8 +61,25 @@ export class UserSharedCacheService implements IUserSharedCacheService {
               status:status
             }
           });
-        })
+        });
 
+        // By Email
+        await this.pipeline.step(pipelineSteps.byEmail, async ()=>{
+
+          // get User Email
+          const userResult=this.pipeline.getResult<UserEntity>(pipelineSteps.byIdentifier);
+          const email=userResult.email;
+
+          return await this._getUserByEmailIdCacheService.handleAsync({
+            env:String(NODE_ENV),
+            key:`user-email-${email}`,
+            setParams:{
+              queryRunner:queryRunner,
+              identifier:identifier,
+              status:status
+            }
+          });
+        });
 
         return ResultFactory.success(VOID_RESULT);
       }
