@@ -2,42 +2,40 @@ import { Container, DtoValidation, ExceptionsWrapper, GuardWrapper, IServiceHand
 import {dbDataSource, QueryRunner} from "../../../../../../config/dbSource";
 import { UserEntity } from "../../../../user.Module";
 
-export class GetUserByIdentifierServiceParameters{
-  public identifier?:string;
-  public status?:StatusEnum;
-  public queryRunner?:QueryRunner;
+export interface IGetUserByIdentifierDbServiceParameters{
+  user:UserEntity;
+  queryRunner:QueryRunner;
 }
 
-export interface IGetUserByIdentifierService extends IServiceHandlerAsync<GetUserByIdentifierServiceParameters,UserEntity>{}
+export interface IGetUserByIdentifierDbService extends IServiceHandlerAsync<IGetUserByIdentifierDbServiceParameters,UserEntity>{}
 
 @sealed
 @Service()
-export class GetUserByIdentifierService implements IGetUserByIdentifierService{
+export class GetUserByIdentifierDbService implements IGetUserByIdentifierDbService{
 
-  private readonly _dtoValidation:DtoValidation<GetUserByIdentifierServiceParameters>;
+  private readonly _dtoValidation:DtoValidation<UserEntity>;
   public constructor(){
-    this._dtoValidation=Container.get(DtoValidation<GetUserByIdentifierServiceParameters>);
+    this._dtoValidation=Container.get(DtoValidation<UserEntity>);
   }
 
-  public async handleAsync(params: GetUserByIdentifierServiceParameters): Promise<Result<UserEntity, ResultError>> {
+  public async handleAsync(params: IGetUserByIdentifierDbServiceParameters): Promise<Result<UserEntity, ResultError>> {
     return await ExceptionsWrapper.tryCatchResultAsync(async ()=>{
 
-      const {identifier,status,queryRunner}=params;
+      const {user,queryRunner}=params;
 
       // Guard
       const guardResult=new GuardWrapper()
       .check(params,'params')
       .check(queryRunner,'queryRunner')
-      .check(identifier,'identifier')
-      .check(status,'status')
+      .check(user,'user')
       .validate();
       if(guardResult.isErr())
         return ResultFactory.error(guardResult.error.statusCode,guardResult.error.message);
 
       // Dto Validation
       const dtoValidationResult=await this._dtoValidation.handleAsync({
-        dto:params,
-        dtoClass:GetUserByIdentifierServiceParameters
+        dto:params.user,
+        dtoClass:UserEntity
       });
       if(dtoValidationResult.isErr())
         return ResultFactory.error(dtoValidationResult.error.statusCode,dtoValidationResult.error.message);
@@ -49,8 +47,8 @@ export class GetUserByIdentifierService implements IGetUserByIdentifierService{
       const result=await entityManager
         .createQueryBuilder(UserEntity,'entity')
         .innerJoinAndSelect(`entity.credentials`,'credentials')
-        .where('entity.identifier = :identifier', {identifier})
-        .andWhere('entity.status = :status', {status})
+        .where('entity.identifier = :identifier', {identifier:user.identifier})
+        .andWhere('entity.status = :status', {status:user.status})
         .getOne();
 
       if(!result)
