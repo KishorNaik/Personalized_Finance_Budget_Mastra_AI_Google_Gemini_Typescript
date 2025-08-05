@@ -116,11 +116,17 @@ export class CreateUserCommandHandler implements RequestHandler<CreateUserComman
         // Save Entity
         await this.pipeline.step(pipelineSteps.SAVE_ENTITY,async ()=>{
           const mapEntityResult=this.pipeline.getResult<ICreateUserMapEntityServiceResult>(pipelineSteps.MAP_ENTITY);
-          return this._createUserSaveService.handleAsync({
+          var result= await this._createUserSaveService.handleAsync({
             user:mapEntityResult.user,
             credentials:mapEntityResult.credentials,
             queryRunner:queryRunner
           });
+          if(result.isErr()){
+            if(result.error.message.includes(`duplicate key value violates unique constraint`))
+              return ResultFactory.error(StatusCodes.CONFLICT,`User with email ${mapEntityResult.user.email} already exists`);
+
+            return ResultFactory.error(result.error.statusCode,result.error.message);
+          }
         });
 
         // Generate JWT Token
