@@ -4,6 +4,7 @@ import winston, { format } from 'winston';
 import winstonDaily from 'winston-daily-rotate-file';
 import { LOG_DIR } from '@/config/env';
 import { traceNamespace } from '@/middlewares/loggers/trace';
+import { TraceIdWrapper } from '../traceId';
 
 // logs dir
 const logDir: string = join(__dirname, '../../../../../', LOG_DIR);
@@ -14,7 +15,7 @@ if (!existsSync(logDir)) {
 
 // Define log format
 const logFormat = winston.format.printf(({ timestamp, level, message, traceId }) => {
-	return `${timestamp} | ${level} | ${message} ${traceId === undefined ? '|' : `| ${traceId}`}`;
+	return `${timestamp} | ${level} | ${message} ${traceId === undefined ? '|' : `| traceId: ${traceId}`}`;
 });
 
 const traceFormat = format((info) => {
@@ -88,7 +89,8 @@ const logConstruct = (
 };
 
 const getTraceId = () => {
-	return traceNamespace.get('traceId');
+	const traceId = traceNamespace?.get('traceId') ?? TraceIdWrapper?.getTraceId();
+  return traceId;
 };
 
 export { logger, stream, getTraceId, logConstruct };

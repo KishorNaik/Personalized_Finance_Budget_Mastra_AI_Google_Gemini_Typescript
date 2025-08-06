@@ -98,7 +98,7 @@ export namespace ExceptionsWrapper {
 			const result = await onTry();
 
 			// If the result itself is an error and we have a fallback
-			if (!result.Success && onFallback) {
+			if (!result.success && onFallback) {
 				return await onFallback(result);
 			}
 			return result;

@@ -38,6 +38,14 @@ export class PipelineWorkflow {
 			this._logger.info(`[Pipeline Step:START] step name: ${name}`);
 			const result = await action();
 
+      if(!result)
+        throw new PipelineWorkflowException(
+          name,
+          false,
+          StatusCodes.NO_CONTENT,
+          `No result found for step ${name} or return object is missing in the step ${name}`
+        );
+
 			if (result.isOk()) {
 				const value = result.value;
 

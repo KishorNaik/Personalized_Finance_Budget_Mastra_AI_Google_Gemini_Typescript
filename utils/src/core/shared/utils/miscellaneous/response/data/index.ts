@@ -12,14 +12,15 @@ export class DataResponseFactory {
 		statusCode?: StatusCodes,
 		data?: TData,
 		message?: string,
-		pagination?: PaginationDataResponseModel
+		pagination?: PaginationDataResponseModel,
 	): DataResponse<TData> {
 		return {
-			Success: success,
-			StatusCode: statusCode,
-			Data: data,
-			Message: message,
-			Pagination: pagination,
+			success: success,
+			statusCode: statusCode,
+			data: data,
+			message: message,
+			pagination: pagination,
+      timestamp: new Date().toISOString(),
 		};
 	}
 
@@ -27,28 +28,30 @@ export class DataResponseFactory {
 		statusCode?: StatusCodes,
 		data?: TData,
 		message?: string,
-		pagination?: PaginationDataResponseModel
+		pagination?: PaginationDataResponseModel,
 	): DataResponse<TData> {
 		return {
-			Success: true,
-			StatusCode: statusCode,
-			Data: data,
-			Message: message,
-			Pagination: pagination,
+			success: true,
+			statusCode: statusCode,
+			data: data,
+			message: message,
+			pagination: pagination,
+      timestamp: new Date().toISOString()
 		};
 	}
 
 	public static error<TData>(
 		statusCode?: StatusCodes,
 		message?: string,
-		pagination?: PaginationDataResponseModel
+		pagination?: PaginationDataResponseModel,
 	): DataResponse<TData> {
 		return {
-			Success: false,
-			StatusCode: statusCode,
-			Data: undefined,
-			Message: message,
-			Pagination: pagination,
+			success: false,
+			statusCode: statusCode,
+			data: undefined,
+			message: message,
+			pagination: pagination,
+      timestamp: new Date().toISOString()
 		};
 	}
 

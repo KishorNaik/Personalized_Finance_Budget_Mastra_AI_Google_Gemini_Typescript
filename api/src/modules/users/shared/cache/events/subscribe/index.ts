@@ -10,7 +10,7 @@ import {
 	WorkerBullMq,
 } from '@kishornaik/utils';
 import { UserSharedCacheService } from '../../set';
-
+import { TraceIdWrapper } from '@/shared/utils/helpers/traceId';
 
 const queueName = 'user-shared-cache-event-queue';
 const consumer = new SenderReceiverConsumerBullMq(bullMqRedisConnection);
@@ -20,6 +20,10 @@ export const subscribeUserSharedCacheDomainEvent: WorkerBullMq = async () => {
 
 	const worker = await consumer.startConsumingAsync<JsonString>(queueName, async (message) => {
 		const { data, correlationId, timestamp, traceId } = message.data;
+
+    // Set TraceId
+    TraceIdWrapper.setTraceId(traceId);
+
 		logger.info(
 			`User Shared Cache Event Job started: traceId: ${traceId} | correlationId: ${correlationId} | jobId: ${message.id}`
 		);
@@ -27,13 +31,12 @@ export const subscribeUserSharedCacheDomainEvent: WorkerBullMq = async () => {
 		// Payload
 		const payload: { identifier: string; status: StatusEnum } = JSON.parse(data);
 
-    // Call Cache Service
+		// Call Cache Service
 		const userSharedCacheService = Container.get(UserSharedCacheService);
-    await userSharedCacheService.handleAsync({
-      identifier:payload.identifier,
-      status:payload.status,
-    })
-
+		await userSharedCacheService.handleAsync({
+			identifier: payload.identifier,
+			status: payload.status,
+		});
 	});
 
 	worker.on('completed', (job) => {

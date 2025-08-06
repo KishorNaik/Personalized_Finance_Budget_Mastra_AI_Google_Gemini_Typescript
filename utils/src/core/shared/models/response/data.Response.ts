@@ -11,9 +11,10 @@ export class PaginationDataResponseModel {
 }
 
 export class DataResponse<TData> {
-	Success?: boolean;
-	StatusCode?: StatusCodes;
-	Data?: TData;
-	Message?: string;
-	Pagination?: PaginationDataResponseModel;
+	success?: boolean;
+	statusCode?: StatusCodes;
+	data?: TData;
+	message?: string;
+	pagination?: PaginationDataResponseModel;
+  timestamp?: string;
 }

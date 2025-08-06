@@ -62,8 +62,8 @@ export class AxiosHelper {
 				const axiosError = ex as AxiosError<DataResponse<TResponse>>;
 				return new Err(
 					new ResultError(
-						axiosError.response?.data.StatusCode ?? 500,
-						axiosError.response?.data?.Message || ex.message
+						axiosError.response?.data.statusCode ?? 500,
+						axiosError.response?.data?.message || ex.message
 					)
 				);
 			}
@@ -89,8 +89,8 @@ export class AxiosHelper {
 				const axiosError = ex as AxiosError<DataResponse<TResponse>>;
 				return new Err(
 					new ResultError(
-						axiosError.response?.data.StatusCode ?? 500,
-						axiosError.response?.data?.Message || ex.message
+						axiosError.response?.data.statusCode ?? 500,
+						axiosError.response?.data?.message || ex.message
 					)
 				);
 			}
@@ -116,8 +116,8 @@ export class AxiosHelper {
 				const axiosError = ex as AxiosError<DataResponse<TResponse>>;
 				return new Err(
 					new ResultError(
-						axiosError.response?.data.StatusCode ?? 500,
-						axiosError.response?.data?.Message || ex.message
+						axiosError.response?.data.statusCode ?? 500,
+						axiosError.response?.data?.message || ex.message
 					)
 				);
 			}
@@ -141,8 +141,8 @@ export class AxiosHelper {
 				const axiosError = ex as AxiosError<DataResponse<TResponse>>;
 				return new Err(
 					new ResultError(
-						axiosError.response?.data.StatusCode ?? 500,
-						axiosError.response?.data?.Message || ex.message
+						axiosError.response?.data.statusCode ?? 500,
+						axiosError.response?.data?.message || ex.message
 					)
 				);
 			}
@@ -168,8 +168,8 @@ export class AxiosHelper {
 				const axiosError = ex as AxiosError<DataResponse<TResponse>>;
 				return new Err(
 					new ResultError(
-						axiosError.response?.data.StatusCode ?? 500,
-						axiosError.response?.data?.Message || ex.message
+						axiosError.response?.data.statusCode ?? 500,
+						axiosError.response?.data?.message || ex.message
 					)
 				);
 			}

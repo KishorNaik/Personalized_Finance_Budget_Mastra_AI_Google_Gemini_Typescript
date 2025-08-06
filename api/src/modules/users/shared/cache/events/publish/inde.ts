@@ -34,39 +34,43 @@ export interface IPublishUserSharedCacheDomainEventService
 
 @sealed
 @Service()
-export class PublishUserSharedCacheDomainEventService implements IPublishUserSharedCacheDomainEventService{
-  public async handleAsync(params: IPublishUserSharedCacheDomainEventServiceParameters): Promise<Result<VoidResult, ResultError>> {
-    return await ExceptionsWrapper.tryCatchResultAsync(async ()=>{
-      const {identifier,status,traceId}=params;
+export class PublishUserSharedCacheDomainEventService
+	implements IPublishUserSharedCacheDomainEventService
+{
+	public async handleAsync(
+		params: IPublishUserSharedCacheDomainEventServiceParameters
+	): Promise<Result<VoidResult, ResultError>> {
+		return await ExceptionsWrapper.tryCatchResultAsync(async () => {
+			const { identifier, status, traceId } = params;
 
-      // Guard
-      const guardResult=new GuardWrapper()
-      .check(identifier,'identifier')
-      .check(status,'status')
-      .check(traceId,'traceId')
-      .validate();
-      if(guardResult.isErr())
-        return ResultFactory.error(guardResult.error.statusCode,guardResult.error.message);
+			// Guard
+			const guardResult = new GuardWrapper()
+				.check(identifier, 'identifier')
+				.check(status, 'status')
+				.check(traceId, 'traceId')
+				.validate();
+			if (guardResult.isErr())
+				return ResultFactory.error(guardResult.error.statusCode, guardResult.error.message);
 
-      // Generate Payload
-      const payload={
-        identifier:identifier,
-        status:status
-      }
+			// Generate Payload
+			const payload = {
+				identifier: identifier,
+				status: status,
+			};
 
-      // Generate Message BullMq Payload
-      const message:SendReceiverMessageBullMq<JsonString>={
-        correlationId:randomUUID().toString(),
-        timestamp:new Date().toISOString(),
-        traceId:traceId,
-        data:JSON.stringify(payload) as JsonString
-      }
+			// Generate Message BullMq Payload
+			const message: SendReceiverMessageBullMq<JsonString> = {
+				correlationId: randomUUID().toString(),
+				timestamp: new Date().toISOString(),
+				traceId: traceId,
+				data: JSON.stringify(payload) as JsonString,
+			};
 
-      // Publish Event
-      await producer.sendAsync<JsonString>(`JOB:${queueName}`,message);
+			// Publish Event
+			await producer.sendAsync<JsonString>(`JOB:${queueName}`, message);
 
-      // Return
-      return ResultFactory.success(VOID_RESULT);
-    });
-  }
+			// Return
+			return ResultFactory.success(VOID_RESULT);
+		});
+	}
 }

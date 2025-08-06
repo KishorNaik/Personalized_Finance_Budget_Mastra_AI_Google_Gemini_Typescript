@@ -67,7 +67,7 @@ export async function authenticateHmac(req: Request, res: Response, next: NextFu
 			undefined,
 			`Forbidden - You do not have permission to access this resource: ${secretKeyResult.error.message}`
 		);
-		return res.status(response.StatusCode).json(response);
+		return res.status(response.statusCode).json(response);
 	}
 
 	const SECRET_KEY = secretKeyResult.value;
@@ -88,7 +88,7 @@ export async function authenticateHmac(req: Request, res: Response, next: NextFu
 			undefined,
 			compareHmacResult.error.message
 		);
-		return res.status(response.StatusCode).json(response);
+		return res.status(response.statusCode).json(response);
 	}
 
 	next();

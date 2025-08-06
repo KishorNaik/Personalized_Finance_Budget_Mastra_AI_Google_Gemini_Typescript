@@ -1,4 +1,4 @@
-import { WorkerBullMq } from "@kishornaik/utils";
-import { subscribeUserSharedCacheDomainEvent } from "./shared/cache/events/subscribe";
+import { WorkerBullMq } from '@kishornaik/utils';
+import { subscribeUserSharedCacheDomainEvent } from './shared/cache/events/subscribe';
 
-export const userModuleBullMqFederation:WorkerBullMq[]=[subscribeUserSharedCacheDomainEvent];
+export const userModuleBullMqFederation: WorkerBullMq[] = [subscribeUserSharedCacheDomainEvent];

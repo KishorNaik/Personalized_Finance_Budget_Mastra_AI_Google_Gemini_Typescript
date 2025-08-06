@@ -15,8 +15,8 @@ export const ErrorMiddleware = (
 
 		if ('StatusCode' in error && 'Message' in error) {
 			const dataResponse: DataResponse<undefined> = error as DataResponse<undefined>;
-			status = dataResponse.StatusCode || 500;
-			message = dataResponse.Message || 'Something went wrong';
+			status = dataResponse.statusCode || 500;
+			message = dataResponse.message || 'Something went wrong';
 		} else {
 			status = error.status || 500;
 			message = error.message || 'Something went wrong';
@@ -27,10 +27,10 @@ export const ErrorMiddleware = (
 		);
 
 		const errorResponse: DataResponse<undefined> = {
-			Success: false,
-			StatusCode: status,
-			Data: undefined,
-			Message: message,
+			success: false,
+			statusCode: status,
+			data: undefined,
+			message: message,
 		};
 
 		res.status(status).json(errorResponse);
