@@ -6,6 +6,7 @@ import {
 	WorkerPusher,
 	WorkerRabbitMq,
 } from '@kishornaik/utils';
+import { userModuleBullMqFederation } from './users/user.Module';
 
 // REST API
 const restApiModulesFederation: Function[] = [];
@@ -16,7 +17,7 @@ type TRPCAppRouter = typeof trpcModulesFederation;
 
 // Workers
 const cronJobWorkerModules: WorkerCronJob[] = [];
-const bullMqWorkerModules: WorkerBullMq[] = [];
+const bullMqWorkerModules: WorkerBullMq[] = [...userModuleBullMqFederation];
 const pusherWorkerModules: WorkerPusher[] = [];
 const rabbitMqWorkerModules: WorkerRabbitMq[] = [];
 const kafkaWorkerModules: WorkerKafka[] = [];
