@@ -20,7 +20,7 @@ import { CreateUserCommand } from '../commands';
 const queueName = 'user-create-integration-event-queue';
 const consumer = new RequestReplyConsumerBullMq(bullMqRedisConnection);
 
-export const subscribeUserSharedCacheDomainEvent: WorkerBullMq = async () => {
+export const subscribeUserCreatedIntegrationEvent: WorkerBullMq = async () => {
   logger.info(`User Create Subscribe Worker Starting...`);
 
   const worker = await consumer.startConsumingAsync<JsonString,JsonString>(queueName, async (reply) => {
