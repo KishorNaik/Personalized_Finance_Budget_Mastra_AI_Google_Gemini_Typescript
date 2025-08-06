@@ -7,9 +7,10 @@ import {
 	WorkerRabbitMq,
 } from '@kishornaik/utils';
 import { userModuleBullMqFederation } from './users/user.Module';
+import { authModuleFederations } from './auth/auth.Module';
 
 // REST API
-const restApiModulesFederation: Function[] = [];
+const restApiModulesFederation: Function[] = [...userModuleBullMqFederation,...authModuleFederations];
 
 // TRPC
 const trpcModulesFederation = mergeRouters();
