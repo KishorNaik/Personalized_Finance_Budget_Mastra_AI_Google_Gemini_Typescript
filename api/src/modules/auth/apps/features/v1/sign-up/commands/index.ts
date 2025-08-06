@@ -78,10 +78,6 @@ export class SignUpCommandHandler implements RequestHandler<SignUpCommand,DataRe
       return DataResponseFactory.success(StatusCodes.CREATED,response);
     });
 
-    CleanUpWrapper.run(()=>{
-      this.pipeline=null;
-    })
-
     return response;
   }
 

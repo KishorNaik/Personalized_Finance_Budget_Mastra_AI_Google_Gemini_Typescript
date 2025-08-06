@@ -104,11 +104,6 @@ export class UserSharedCacheService implements IUserSharedCacheService {
 			},
 		});
 
-		// CleanUp
-		CleanUpWrapper.run(() => {
-			this.pipeline = null;
-		});
-
 		return response;
 	}
 }
