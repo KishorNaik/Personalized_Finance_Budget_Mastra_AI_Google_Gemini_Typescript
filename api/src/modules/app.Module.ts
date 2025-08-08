@@ -6,14 +6,11 @@ import {
 	WorkerPusher,
 	WorkerRabbitMq,
 } from '@kishornaik/utils';
-import { userModuleBullMqFederation } from './users/user.Module';
+import { userModuleBullMqFederation, userModuleFederations } from './users/user.Module';
 import { authModuleFederations } from './auth/auth.Module';
 
 // REST API
-const restApiModulesFederation: Function[] = [
-	...userModuleBullMqFederation,
-	...authModuleFederations,
-];
+const restApiModulesFederation: Function[] = [...userModuleFederations, ...authModuleFederations];
 
 // TRPC
 const trpcModulesFederation = mergeRouters();

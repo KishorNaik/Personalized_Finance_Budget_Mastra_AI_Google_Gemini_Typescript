@@ -28,24 +28,26 @@ import { GetUserByIdentifierResponseMapperService } from './services/mapResponse
 
 // #region Query
 @sealed
-export class GetUserByIdentifierQuery extends RequestData<DataResponse<GetUserByIdentifierResponseDto>>{
-  private readonly _request: GetUserByIdentifierRequestDto
-  public constructor(request: GetUserByIdentifierRequestDto) {
-    super();
-    this._request = request;
-  }
+export class GetUserByIdentifierQuery extends RequestData<
+	DataResponse<GetUserByIdentifierResponseDto>
+> {
+	private readonly _request: GetUserByIdentifierRequestDto;
+	public constructor(request: GetUserByIdentifierRequestDto) {
+		super();
+		this._request = request;
+	}
 
-  public get request(): GetUserByIdentifierRequestDto {
-    return this._request;
-  }
+	public get request(): GetUserByIdentifierRequestDto {
+		return this._request;
+	}
 }
 // #endregion
 
 // #region Pipeline Steps
 enum pipelineSteps {
-  validationService = `validationService`,
-  getUserDataByIdentifier = `getUserDataByIdentifier`,
-  mapResponse = `mapResponse`,
+	validationService = `validationService`,
+	getUserDataByIdentifier = `getUserDataByIdentifier`,
+	mapResponse = `mapResponse`,
 }
 
 //#endregion
@@ -53,80 +55,85 @@ enum pipelineSteps {
 // #region Query Handler
 @sealed
 @requestHandler(GetUserByIdentifierQuery)
-export class GetUserByIdentifierQueryHandler implements RequestHandler<GetUserByIdentifierQuery,DataResponse<GetUserByIdentifierResponseDto>> {
+export class GetUserByIdentifierQueryHandler
+	implements
+		RequestHandler<GetUserByIdentifierQuery, DataResponse<GetUserByIdentifierResponseDto>>
+{
+	private pipeline = new PipelineWorkflow(logger);
+	private readonly _getUserByIdentifierRequestValidationService: GetUserByIdentifierRequestValidationService;
+	private readonly _getUserByIdentifierCacheService: GetUserByIdentifierCacheService;
+	private readonly _getUserByIdentifierResponseMapperService = Container.get(
+		GetUserByIdentifierResponseMapperService
+	);
 
-  private pipeline = new PipelineWorkflow(logger);
-  private readonly _getUserByIdentifierRequestValidationService: GetUserByIdentifierRequestValidationService;
-  private readonly _getUserByIdentifierCacheService:GetUserByIdentifierCacheService;
-  private readonly _getUserByIdentifierResponseMapperService = Container.get(GetUserByIdentifierResponseMapperService);
+	public constructor() {
+		this._getUserByIdentifierRequestValidationService = Container.get(
+			GetUserByIdentifierRequestValidationService
+		);
+		this._getUserByIdentifierCacheService = Container.get(GetUserByIdentifierCacheService);
+		this._getUserByIdentifierResponseMapperService = Container.get(
+			GetUserByIdentifierResponseMapperService
+		);
+	}
 
-  public constructor(){
-    this._getUserByIdentifierRequestValidationService = Container.get(GetUserByIdentifierRequestValidationService);
-    this._getUserByIdentifierCacheService = Container.get(GetUserByIdentifierCacheService);
-    this._getUserByIdentifierResponseMapperService = Container.get(GetUserByIdentifierResponseMapperService);
-  }
-
-
-  public async handle(value: GetUserByIdentifierQuery): Promise<DataResponse<GetUserByIdentifierResponseDto>> {
-    const queryRunner = await getQueryRunner();
+	public async handle(
+		value: GetUserByIdentifierQuery
+	): Promise<DataResponse<GetUserByIdentifierResponseDto>> {
+		const queryRunner = await getQueryRunner();
 		await queryRunner.connect();
 
-    return await TransactionsWrapper.runDataResponseAsync({
-      queryRunner: queryRunner,
-      onTransaction: async () => {
-        const {request}=value;
+		return await TransactionsWrapper.runDataResponseAsync({
+			queryRunner: queryRunner,
+			onTransaction: async () => {
+				const { request } = value;
 
-      // Guard
-      const guardResult = new GuardWrapper()
-        .check(request, 'request')
-        .validate();
-      if (guardResult.isErr())
-        return DataResponseFactory.error(
-          guardResult.error.statusCode,
-          guardResult.error.message
-        );
+				// Guard
+				const guardResult = new GuardWrapper().check(request, 'request').validate();
+				if (guardResult.isErr())
+					return DataResponseFactory.error(
+						guardResult.error.statusCode,
+						guardResult.error.message
+					);
 
-      // Validation Service Pipeline
-      await this.pipeline.step(pipelineSteps.validationService, async () => {
-        return await this._getUserByIdentifierRequestValidationService.handleAsync({
-          dto: request,
-          dtoClass: GetUserByIdentifierRequestDto,
-        });
-      });
+				// Validation Service Pipeline
+				await this.pipeline.step(pipelineSteps.validationService, async () => {
+					return await this._getUserByIdentifierRequestValidationService.handleAsync({
+						dto: request,
+						dtoClass: GetUserByIdentifierRequestDto,
+					});
+				});
 
-      // Get User Data By Email Id from Cache
-      await this.pipeline.step(pipelineSteps.getUserDataByIdentifier, async ()=>{
-        return await this._getUserByIdentifierCacheService.handleAsync({
-          env: String(NODE_ENV),
-          key: `user-identifier-${request.identifier}`,
-          setParams:{
-            identifier: request.identifier,
-            status: StatusEnum.ACTIVE,
-            queryRunner:queryRunner
-          }
-        });
-      });
+				// Get User Data By Email Id from Cache
+				await this.pipeline.step(pipelineSteps.getUserDataByIdentifier, async () => {
+					return await this._getUserByIdentifierCacheService.handleAsync({
+						env: String(NODE_ENV),
+						key: `user-identifier-${request.identifier}`,
+						setParams: {
+							identifier: request.identifier,
+							status: StatusEnum.ACTIVE,
+							queryRunner: queryRunner,
+						},
+					});
+				});
 
-      // Map Response
-      await this.pipeline.step(pipelineSteps.mapResponse, async () => {
-        const getUserDataByIdentifierResult =
-          this.pipeline.getResult<UserEntity>(
-            pipelineSteps.getUserDataByIdentifier
-          );
-        return await this._getUserByIdentifierResponseMapperService.handleAsync(
-          getUserDataByIdentifierResult
-        );
-      });
+				// Map Response
+				await this.pipeline.step(pipelineSteps.mapResponse, async () => {
+					const getUserDataByIdentifierResult = this.pipeline.getResult<UserEntity>(
+						pipelineSteps.getUserDataByIdentifier
+					);
+					return await this._getUserByIdentifierResponseMapperService.handleAsync(
+						getUserDataByIdentifierResult
+					);
+				});
 
-      const response = this.pipeline.getResult<GetUserByIdentifierResponseDto>(
-        pipelineSteps.mapResponse
-      );
+				const response = this.pipeline.getResult<GetUserByIdentifierResponseDto>(
+					pipelineSteps.mapResponse
+				);
 
-      // return
-      return DataResponseFactory.success(StatusCodes.OK, response);
-      },
-    });
-  }
+				// return
+				return DataResponseFactory.success(StatusCodes.OK, response);
+			},
+		});
+	}
 }
 //#endregion
-

@@ -19,7 +19,7 @@ const queueName = 'get-user-by-email-integration-event-queue';
 const consumer = new RequestReplyConsumerBullMq(bullMqRedisConnection);
 
 export const subscribeGetUserByEmailIdIntegrationEvent: WorkerBullMq = async () => {
-  logger.info(`Get User By Email Id Subscribe Worker Starting...`);
+	logger.info(`Get User By Email Id Subscribe Worker Starting...`);
 	const worker = await consumer.startConsumingAsync<JsonString, JsonString>(
 		queueName,
 		async (reply) => {
@@ -86,7 +86,7 @@ export const subscribeGetUserByEmailIdIntegrationEvent: WorkerBullMq = async () 
 		}
 	);
 
-  worker.on('completed', (job) => {
+	worker.on('completed', (job) => {
 		logger.info(
 			`Get User By Email Id Integration Event Completed: traceId: ${job.data.traceId} | correlationId: ${job.data.correlationId} | jobId: ${job.id}`
 		);
