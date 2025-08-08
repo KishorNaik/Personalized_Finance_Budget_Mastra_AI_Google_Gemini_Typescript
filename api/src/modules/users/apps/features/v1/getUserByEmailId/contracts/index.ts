@@ -14,12 +14,12 @@ export class GetUserByEmailIdRequestDto {
 
 // #region Response Dto
 export class GetUserByEmailIdResponseDto {
-	identifier?: string;
-	firstName?: string;
-	lastName?: string;
-	email?: string;
-	status?: StatusEnum;
-	credentials?: {
+	public identifier?: string;
+	public firstName?: string;
+	public lastName?: string;
+	public email?: string;
+	public status?: StatusEnum;
+	public credentials?: {
 		identifier?: string;
 		userName?: string;
 		salt?: string;

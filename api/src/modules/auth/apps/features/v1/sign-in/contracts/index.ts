@@ -26,6 +26,7 @@ export class SignInRequestDto{
 
 // #region Response Dto
 export class SignInResponseDto{
+  identifier?: string;
   firstName?:string;
   lastName?:string;
   email?:string;
