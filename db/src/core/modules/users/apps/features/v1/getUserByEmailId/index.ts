@@ -47,7 +47,7 @@ export class GetUserByEmailIdDbService implements IGetUserByEmailIdDbService{
       const result=await entityManager
         .createQueryBuilder(UserEntity,'entity')
         .innerJoinAndSelect(`entity.credentials`,'credentials')
-        .where('entity.email = :email', {identifier:user.email})
+        .where('entity.email = :email', {email:user.email})
         .andWhere('entity.status = :status', {status:user.status})
         .getOne();
 

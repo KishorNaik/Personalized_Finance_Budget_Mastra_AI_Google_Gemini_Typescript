@@ -1,13 +1,13 @@
 import expect from 'expect';
 import { describe, it } from 'node:test';
 import { destroyDatabase, initializeDatabase } from '@kishornaik/db';
+import { mediator } from '@/shared/utils/helpers/medaitR';
+import { ValidateEnv } from '@kishornaik/utils';
+import { randomUUID } from 'node:crypto';
 import {
 	CreateUserCommand,
 	CreateUsersRequestDto,
 } from '@/modules/users/apps/features/v1/createUsers';
-import { mediator } from '@/shared/utils/helpers/medaitR';
-import { ValidateEnv } from '@kishornaik/utils';
-import { randomUUID } from 'node:crypto';
 
 process.env.NODE_ENV = 'development';
 ValidateEnv();
@@ -18,9 +18,9 @@ describe(`Create-User-Unit-Test`, () => {
 		await initializeDatabase();
 
 		const request: CreateUsersRequestDto = new CreateUsersRequestDto();
-		request.firstName = 'aon';
+		request.firstName = 'bon';
 		request.lastName = 'doe';
-		request.email = 'aon@example.com';
+		request.email = 'bon@example.com';
 		request.password = 'password0123';
 
 		const traceId: string = randomUUID().toString();

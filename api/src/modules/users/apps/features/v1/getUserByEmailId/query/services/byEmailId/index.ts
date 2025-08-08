@@ -3,6 +3,7 @@ import {
 	ExceptionsWrapper,
 	GuardWrapper,
 	IServiceHandlerAsync,
+	redisCacheCircuitBreaker,
 	RedisHelper,
 	Result,
 	ResultError,
@@ -12,6 +13,7 @@ import {
 	StatusEnum,
 } from '@kishornaik/utils';
 import { GetUserByEmailIdDbService, QueryRunner, UserEntity } from '@kishornaik/db';
+import { NODE_ENV } from '@/config/env';
 
 Container.set<GetUserByEmailIdDbService>(
 	GetUserByEmailIdDbService,
@@ -53,6 +55,7 @@ export class GetUserByEmailIdService implements IGetUserByEmailIdService {
 				return ResultFactory.error(guardResult.error.statusCode, guardResult.error.message);
 
 			// Read email Data from the redis
+      await this._redisHelper.init(String(NODE_ENV)==='development' ? true : false);
 			const redisResult = await this._redisHelper.get(key);
 			if (redisResult.isErr()) {
 				const userObj = new UserEntity();

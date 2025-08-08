@@ -25,6 +25,10 @@ async function redisOperation(redisHelper: RedisHelper, cacheKey: string) {
 	//return 'test';
 	const cacheValueResult = await redisHelper.get(cacheKey);
 	if (cacheValueResult.isErr()) {
+    if(cacheValueResult.error.statusCode===StatusCodes.NOT_FOUND)
+    {
+      return null;
+    }
 		throw new Error(`Redis error: ${cacheValueResult.error.message}`);
 	}
 	return cacheValueResult.value;
@@ -93,6 +97,8 @@ export class RedisHelper {
 
 		if (!key) return ResultFactory.error(StatusCodes.BAD_REQUEST, 'Key is required');
 		const data = await this.client?.get(key);
+    if(!data)
+      return ResultFactory.error(StatusCodes.NOT_FOUND, 'data not found');
 		return new Ok(data);
 	}
 

@@ -44,12 +44,12 @@ export class GetUserByEmailIdCacheService extends RedisStoreWrapper<
 	IGetUserByEmailIdCacheServiceParameters,
 	UserEntity
 > {
-	private readonly _getByEmailIdDbService: GetUserByIdentifierDbService;
+	private readonly _getByEmailIdDbService: GetUserByEmailIdDbService;
 	private readonly _getRowVersionDbService: GetUserRowVersionDbService;
 	public constructor() {
 		const redisHelper = new RedisHelper();
 		super(redisHelper, logger);
-		this._getByEmailIdDbService = Container.get(GetUserByIdentifierDbService);
+		this._getByEmailIdDbService = Container.get(GetUserByEmailIdDbService);
 		this._getRowVersionDbService = Container.get(GetUserRowVersionDbService);
 	}
 
