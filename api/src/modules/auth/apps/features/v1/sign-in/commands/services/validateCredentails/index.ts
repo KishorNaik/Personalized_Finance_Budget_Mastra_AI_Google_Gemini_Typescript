@@ -53,14 +53,11 @@ export class ValidateCredentialsService implements IValidateCredentialsService {
 
 			// Validate Password
 			const result = await this._hashPasswordService.comparePasswordAsync(password, hash);
-			if (result.isErr())
-				return ResultFactory.error(result.error.statusCode, result.error.message);
-
-			if (!result.value)
-				return ResultFactory.error(
-					StatusCodes.UNAUTHORIZED,
-					`User name and password do not match`
-				);
+			if (result.isErr() || !result.value)
+        return ResultFactory.error(
+          StatusCodes.UNAUTHORIZED,
+          `User name and password do not match`
+        );
 
 			return ResultFactory.success(VOID_RESULT);
 		});

@@ -19,6 +19,7 @@ const queueName = 'get-user-by-email-integration-event-queue';
 const consumer = new RequestReplyConsumerBullMq(bullMqRedisConnection);
 
 export const subscribeGetUserByEmailIdIntegrationEvent: WorkerBullMq = async () => {
+  logger.info(`Get User By Email Id Subscribe Worker Starting...`);
 	const worker = await consumer.startConsumingAsync<JsonString, JsonString>(
 		queueName,
 		async (reply) => {
@@ -73,7 +74,7 @@ export const subscribeGetUserByEmailIdIntegrationEvent: WorkerBullMq = async () 
 			const message: ReplyMessageBullMq<JsonString> = {
 				success: true,
 				correlationId: correlationId,
-				data: JSON.stringify(result) as JsonString,
+				data: JSON.stringify(result.data) as JsonString,
 				message: `Get User By Email Id Event Job completed: correlationId: ${correlationId} | jobId: ${reply.id}`,
 				statusCode: StatusCodes.OK,
 				error: null,
@@ -84,4 +85,16 @@ export const subscribeGetUserByEmailIdIntegrationEvent: WorkerBullMq = async () 
 			return message;
 		}
 	);
+
+  worker.on('completed', (job) => {
+		logger.info(
+			`Get User By Email Id Integration Event Completed: traceId: ${job.data.traceId} | correlationId: ${job.data.correlationId} | jobId: ${job.id}`
+		);
+	});
+
+	worker.on('failed', (job, err) => {
+		logger.error(
+			`Get User By Email Id Integration Event Failed: traceId: ${job.data.traceId} | correlationId: ${job.data.correlationId} | jobId: ${job.id} | error: ${err.message}`
+		);
+	});
 };
