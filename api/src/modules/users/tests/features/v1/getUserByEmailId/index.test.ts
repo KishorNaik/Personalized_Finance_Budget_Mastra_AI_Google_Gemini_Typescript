@@ -15,8 +15,8 @@ describe(`Get-User-By-EmailId-Unit-Test`, () => {
 	it(`should_return_200_when_all_services_execute_successfully`, async () => {
 		await initializeDatabase();
 
-    const request:GetUserByEmailIdRequestDto=new GetUserByEmailIdRequestDto();
-    request.emailId=`bon@example.com`;
+		const request: GetUserByEmailIdRequestDto = new GetUserByEmailIdRequestDto();
+		request.emailId = `bon@example.com`;
 
 		const traceId: string = randomUUID().toString();
 

@@ -11,14 +11,14 @@ import {
 import { OpenAPI } from 'routing-controllers-openapi';
 import { ValidationMiddleware } from '@/middlewares/security/validations';
 import { StatusCodes } from '@kishornaik/utils';
-import { SignUpRequestDto } from '../contracts';
 import { mediator } from '@/shared/utils/helpers/medaitR';
-import { SignUpCommand } from '../commands';
+import { SignInRequestDto } from '../contracts';
+import { SignInCommand } from '../commands';
 
 @JsonController(`/api/v1/auth`)
 @OpenAPI({ tags: [`auth`] })
-export class SignUpEndpoint {
-	@Post('/sign-up')
+export class SignInEndpoint {
+	@Post('/sign-in')
 	@OpenAPI({
 		summary: `Sign-up`,
 		tags: [`auth`],
@@ -26,9 +26,9 @@ export class SignUpEndpoint {
 	})
 	@HttpCode(StatusCodes.OK)
 	@OnUndefined(StatusCodes.BAD_REQUEST)
-	@UseBefore(ValidationMiddleware(SignUpRequestDto))
-	public async postAsync(@Body() request: SignUpRequestDto, @Res() res: Response) {
-		const response = await mediator.send(new SignUpCommand(request));
+	@UseBefore(ValidationMiddleware(SignInRequestDto))
+	public async postAsync(@Body() request: SignInRequestDto, @Res() res: Response) {
+		const response = await mediator.send(new SignInCommand(request));
 		return res.status(response.statusCode).json(response);
 	}
 }

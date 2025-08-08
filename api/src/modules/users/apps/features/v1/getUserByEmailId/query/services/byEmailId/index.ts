@@ -55,7 +55,7 @@ export class GetUserByEmailIdService implements IGetUserByEmailIdService {
 				return ResultFactory.error(guardResult.error.statusCode, guardResult.error.message);
 
 			// Read email Data from the redis
-      await this._redisHelper.init(String(NODE_ENV)==='development' ? true : false);
+			await this._redisHelper.init(String(NODE_ENV) === 'development' ? true : false);
 			const redisResult = await this._redisHelper.get(key);
 			if (redisResult.isErr()) {
 				const userObj = new UserEntity();
