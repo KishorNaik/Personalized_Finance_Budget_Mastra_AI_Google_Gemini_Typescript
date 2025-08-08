@@ -106,8 +106,8 @@ export class CreateUserCommandHandler
 		const queryRunner = getQueryRunner();
 		await queryRunner.connect();
 
-    // Set TraceId
-    TraceIdWrapper.setTraceId(value.traceId);
+		// Set TraceId
+		TraceIdWrapper.setTraceId(value.traceId);
 
 		// Transaction Workflow
 		const response = await TransactionsWrapper.runDataResponseAsync({

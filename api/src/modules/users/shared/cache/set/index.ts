@@ -96,6 +96,7 @@ export class UserSharedCacheService implements IUserSharedCacheService {
 							queryRunner: queryRunner,
 							identifier: identifier,
 							status: status,
+							email: email,
 						},
 					});
 				});

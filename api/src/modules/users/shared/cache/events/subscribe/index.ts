@@ -21,8 +21,8 @@ export const subscribeUserSharedCacheDomainEvent: WorkerBullMq = async () => {
 	const worker = await consumer.startConsumingAsync<JsonString>(queueName, async (message) => {
 		const { data, correlationId, timestamp, traceId } = message.data;
 
-    // Set TraceId
-    TraceIdWrapper.setTraceId(traceId);
+		// Set TraceId
+		TraceIdWrapper.setTraceId(traceId);
 
 		logger.info(
 			`User Shared Cache Event Job started: traceId: ${traceId} | correlationId: ${correlationId} | jobId: ${message.id}`
@@ -33,15 +33,16 @@ export const subscribeUserSharedCacheDomainEvent: WorkerBullMq = async () => {
 
 		// Call Cache Service
 		const userSharedCacheService = Container.get(UserSharedCacheService);
-		const result=await userSharedCacheService.handleAsync({
+		const result = await userSharedCacheService.handleAsync({
 			identifier: payload.identifier,
 			status: payload.status,
 		});
 
-    if(result.isErr()){
-      logger.error(`User Shared Cache Event Job Failed: traceId: ${traceId} | correlationId: ${correlationId} | jobId: ${message.id} | error: ${result.error.message}`);
-    }
-
+		if (result.isErr()) {
+			logger.error(
+				`User Shared Cache Event Job Failed: traceId: ${traceId} | correlationId: ${correlationId} | jobId: ${message.id} | error: ${result.error.message}`
+			);
+		}
 	});
 
 	worker.on('completed', (job) => {

@@ -1,3 +1,3 @@
-import { SignUpEndpoint } from "./apps/features/v1/sign-up";
+import { SignUpEndpoint } from './apps/features/v1/sign-up';
 
-export const authModuleFederations:Function[]=[SignUpEndpoint]
+export const authModuleFederations: Function[] = [SignUpEndpoint];

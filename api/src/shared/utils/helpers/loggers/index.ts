@@ -90,7 +90,7 @@ const logConstruct = (
 
 const getTraceId = () => {
 	const traceId = traceNamespace?.get('traceId') ?? TraceIdWrapper?.getTraceId();
-  return traceId;
+	return traceId;
 };
 
 export { logger, stream, getTraceId, logConstruct };

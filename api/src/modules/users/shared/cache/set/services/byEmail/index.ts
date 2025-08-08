@@ -1,4 +1,5 @@
 import {
+	GetUserByEmailIdDbService,
 	GetUserByIdentifierDbService,
 	GetUserRowVersionDbService,
 	QueryRunner,
@@ -25,9 +26,15 @@ Container.set<GetUserRowVersionDbService>(
 	new GetUserRowVersionDbService()
 );
 
+Container.set<GetUserByEmailIdDbService>(
+	GetUserByEmailIdDbService,
+	new GetUserByEmailIdDbService()
+);
+
 export interface IGetUserByEmailIdCacheServiceParameters {
 	queryRunner: QueryRunner;
 	identifier: string;
+	email: string;
 	status: StatusEnum;
 }
 
@@ -37,12 +44,12 @@ export class GetUserByEmailIdCacheService extends RedisStoreWrapper<
 	IGetUserByEmailIdCacheServiceParameters,
 	UserEntity
 > {
-	private readonly _getByIdentifierDbService: GetUserByIdentifierDbService;
+	private readonly _getByEmailIdDbService: GetUserByIdentifierDbService;
 	private readonly _getRowVersionDbService: GetUserRowVersionDbService;
 	public constructor() {
 		const redisHelper = new RedisHelper();
 		super(redisHelper, logger);
-		this._getByIdentifierDbService = Container.get(GetUserByIdentifierDbService);
+		this._getByEmailIdDbService = Container.get(GetUserByIdentifierDbService);
 		this._getRowVersionDbService = Container.get(GetUserRowVersionDbService);
 	}
 
@@ -50,12 +57,12 @@ export class GetUserByEmailIdCacheService extends RedisStoreWrapper<
 		params: IGetUserByEmailIdCacheServiceParameters
 	): Promise<Result<UserEntity, ResultError>> {
 		return await ExceptionsWrapper.tryCatchResultAsync(async () => {
-			const { queryRunner, identifier, status } = params;
+			const { queryRunner, email, status } = params;
 
 			// Guard
 			const guardResult = new GuardWrapper()
 				.check(queryRunner, 'queryRunner')
-				.check(identifier, 'identifier')
+				.check(email, 'email')
 				.check(status, 'status')
 				.validate();
 			if (guardResult.isErr())
@@ -63,11 +70,11 @@ export class GetUserByEmailIdCacheService extends RedisStoreWrapper<
 
 			// Map User Entity
 			const user: UserEntity = new UserEntity();
-			user.identifier = identifier;
+			user.email = email;
 			user.status = status;
 
 			// Get User Data By Identifier
-			const result = await this._getByIdentifierDbService.handleAsync({
+			const result = await this._getByEmailIdDbService.handleAsync({
 				queryRunner: queryRunner,
 				user: user,
 			});

@@ -10,7 +10,10 @@ import { userModuleBullMqFederation } from './users/user.Module';
 import { authModuleFederations } from './auth/auth.Module';
 
 // REST API
-const restApiModulesFederation: Function[] = [...userModuleBullMqFederation,...authModuleFederations];
+const restApiModulesFederation: Function[] = [
+	...userModuleBullMqFederation,
+	...authModuleFederations,
+];
 
 // TRPC
 const trpcModulesFederation = mergeRouters();

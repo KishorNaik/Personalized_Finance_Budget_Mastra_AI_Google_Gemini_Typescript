@@ -28,7 +28,7 @@ export class SignUpEndpoint {
 	@OnUndefined(StatusCodes.BAD_REQUEST)
 	@UseBefore(ValidationMiddleware(SignUpRequestDto))
 	public async postAsync(@Body() request: SignUpRequestDto, @Res() res: Response) {
-    const response=await mediator.send(new SignUpCommand(request));
-    return res.status(response.statusCode).json(response);
+		const response = await mediator.send(new SignUpCommand(request));
+		return res.status(response.statusCode).json(response);
 	}
 }
