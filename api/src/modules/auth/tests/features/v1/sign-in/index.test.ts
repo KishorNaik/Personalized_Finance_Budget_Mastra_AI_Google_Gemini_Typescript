@@ -18,7 +18,7 @@ describe(`Sign-In_Integration_Tests`, () => {
 	// node --trace-deprecation --test --test-name-pattern='should_return_201_when_all_services_executed_Successfully' --require ts-node/register -r tsconfig-paths/register ./src/modules/auth/tests/features/v1/sign-in/index.test.ts
 	it(`should_return_201_when_all_services_executed_Successfully`, async () => {
 		const requestDto: SignInRequestDto = new SignInRequestDto();
-    requestDto.userName = `bon1@example.com`;
+    requestDto.userName = `bon@example.com`;
 		requestDto.password = 'password0123';
 
 		const response = await request(app).post('/api/v1/auth/sign-in').send(requestDto);
