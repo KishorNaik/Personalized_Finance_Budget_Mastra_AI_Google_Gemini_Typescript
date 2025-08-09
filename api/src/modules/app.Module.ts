@@ -8,9 +8,14 @@ import {
 } from '@kishornaik/utils';
 import { userModuleBullMqFederation, userModuleFederations } from './users/user.Module';
 import { authModuleFederations } from './auth/auth.Module';
+import { transactionModuleFederation } from './transactions/transaction.Module';
 
 // REST API
-const restApiModulesFederation: Function[] = [...userModuleFederations, ...authModuleFederations];
+const restApiModulesFederation: Function[] = [
+	...userModuleFederations,
+	...authModuleFederations,
+	...transactionModuleFederation,
+];
 
 // TRPC
 const trpcModulesFederation = mergeRouters();
