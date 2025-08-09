@@ -39,20 +39,20 @@ export class GetTransactionsFilterDto {
 	public status?: StatusEnum;
 }
 
-export interface IGetTransactionByMonthAndYearServiceParameters {
+export interface IGetTransactionByMonthAndYearDbServiceParameters {
 	request: GetTransactionsFilterDto;
 	queryRunner: QueryRunner;
 }
 
-export interface IGetTransactionByMonthAndYearsService
+export interface IGetTransactionByMonthAndYearsDbService
 	extends IServiceHandlerAsync<
-		IGetTransactionByMonthAndYearServiceParameters,
+		IGetTransactionByMonthAndYearDbServiceParameters,
 		Array<TransactionEntity>
 	> {}
 
 @sealed
 @Service()
-export class GetTransactionsByMonthAndYearService implements IGetTransactionByMonthAndYearsService {
+export class GetTransactionsByMonthAndYearDbService implements IGetTransactionByMonthAndYearsDbService {
 	private readonly _dtoValidationService: DtoValidation<GetTransactionsFilterDto>;
 
 	public constructor() {
@@ -60,7 +60,7 @@ export class GetTransactionsByMonthAndYearService implements IGetTransactionByMo
 	}
 
 	public async handleAsync(
-		params: IGetTransactionByMonthAndYearServiceParameters
+		params: IGetTransactionByMonthAndYearDbServiceParameters
 	): Promise<Result<TransactionEntity[], ResultError>> {
 		return await ExceptionsWrapper.tryCatchResultAsync(async () => {
 			const { queryRunner, request } = params;

@@ -9,7 +9,7 @@ import { getRandomValues, randomUUID } from 'node:crypto';
 import { BoolEnum, StatusEnum } from '@kishornaik/utils';
 import expect from 'expect';
 import {
-	GetTransactionsByMonthAndYearService,
+	GetTransactionsByMonthAndYearDbService,
 	GetTransactionsFilterDto,
 } from '../../../../transaction.Module';
 
@@ -35,7 +35,7 @@ describe(`Get-Transaction-By-Month-Years-Unit-Test`, () => {
 		dto.status = StatusEnum.ACTIVE;
 
 		await queryRunner.startTransaction();
-		const addTransactionResult = await new GetTransactionsByMonthAndYearService().handleAsync({
+		const addTransactionResult = await new GetTransactionsByMonthAndYearDbService().handleAsync({
 			queryRunner: queryRunner,
 			request: dto,
 		});
