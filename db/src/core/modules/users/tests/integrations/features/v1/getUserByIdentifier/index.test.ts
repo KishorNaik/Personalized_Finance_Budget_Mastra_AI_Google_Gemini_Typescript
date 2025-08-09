@@ -8,43 +8,45 @@ import {
 import { getRandomValues, randomUUID } from 'node:crypto';
 import { BoolEnum, StatusEnum } from '@kishornaik/utils';
 import expect from 'expect';
-import { AddUsersCredentialsDbService, AddUsersDbService, GetUserByIdentifierDbService, UserCredentialsEntity, UserEntity } from '../../../../../user.Module';
+import {
+	AddUsersCredentialsDbService,
+	AddUsersDbService,
+	GetUserByIdentifierDbService,
+	UserCredentialsEntity,
+	UserEntity,
+} from '../../../../../user.Module';
 
-describe(`Get-User-By-Identifier-Unit-Test`,()=>{
-  let queryRunner: QueryRunner;
+describe(`Get-User-By-Identifier-Unit-Test`, () => {
+	let queryRunner: QueryRunner;
 
-  beforeEach(async () => {
-    await initializeDatabase();
-    queryRunner = await getQueryRunner();
-  });
+	beforeEach(async () => {
+		await initializeDatabase();
+		queryRunner = await getQueryRunner();
+	});
 
-  afterEach(async () => {
-    await queryRunner.release();
-    await destroyDatabase();
-  });
+	afterEach(async () => {
+		await queryRunner.release();
+		await destroyDatabase();
+	});
 
-  // node --trace-deprecation --test --test-name-pattern='should_return_true_when_all_services_passed' --require ts-node/register -r tsconfig-paths/register ./src/core/modules/users/tests/integrations/features/v1/getUserByIdentifier/index.test.ts
-  test(`should_return_true_when_all_services_passed`,async()=>{
+	// node --trace-deprecation --test --test-name-pattern='should_return_true_when_all_services_passed' --require ts-node/register -r tsconfig-paths/register ./src/core/modules/users/tests/integrations/features/v1/getUserByIdentifier/index.test.ts
+	test(`should_return_true_when_all_services_passed`, async () => {
+		const user: UserEntity = new UserEntity();
+		user.identifier = `977da003-b2cd-4bfd-ab4f-8dffaec27ae6`;
+		user.status = StatusEnum.ACTIVE;
 
-    const user:UserEntity=new UserEntity();
-    user.identifier=`977da003-b2cd-4bfd-ab4f-8dffaec27ae6`
-    user.status=StatusEnum.ACTIVE;
-
-    await queryRunner.startTransaction();
-    const result=await new GetUserByIdentifierDbService().handleAsync({
-      user:user,
-      queryRunner:queryRunner
-    });
-    if(result.isErr()){
-      await queryRunner.rollbackTransaction();
-      expect(true).toBe(false);
-      return;
-    }
-    await queryRunner.commitTransaction();
-    expect(result.isOk()).toBe(true);
-    expect(result.isOk()).toBe(true);
-
-  });
-
-
+		await queryRunner.startTransaction();
+		const result = await new GetUserByIdentifierDbService().handleAsync({
+			user: user,
+			queryRunner: queryRunner,
+		});
+		if (result.isErr()) {
+			await queryRunner.rollbackTransaction();
+			expect(true).toBe(false);
+			return;
+		}
+		await queryRunner.commitTransaction();
+		expect(result.isOk()).toBe(true);
+		expect(result.isOk()).toBe(true);
+	});
 });
