@@ -7,3 +7,4 @@ export * from './infrastructures/entity/transaction/index';
 
 // Service
 export * from './apps/features/v1/addTransaction/index';
+export * from "./apps/features/v1/getTransactions/index";

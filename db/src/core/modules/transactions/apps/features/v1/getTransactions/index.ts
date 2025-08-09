@@ -14,6 +14,8 @@ import {
 import { IsNotEmpty, IsNumber, Max, Min } from 'class-validator';
 import { dbDataSource, QueryRunner } from '../../../../../../config/dbSource';
 import { TransactionEntity } from '../../../../transaction.Module';
+import { IsUUID } from 'class-validator/types/decorator/decorators';
+import { IsString } from 'class-validator/types/decorator/typechecker/IsString';
 
 export class GetTransactionsFilterDto {
 	@IsNumber()
@@ -27,6 +29,11 @@ export class GetTransactionsFilterDto {
 	@Max(3000)
 	@IsNotEmpty()
 	public year?: number;
+
+  @IsNotEmpty()
+  @IsString()
+  @IsUUID()
+  public userId?: string
 }
 
 export interface IGetTransactionByMonthAndYearServiceParameters {
@@ -80,7 +87,8 @@ export class GetTransactionsByMonthAndYearService implements IGetTransactionByMo
 			// Query
 			const result = await entityManager
 				.createQueryBuilder(TransactionEntity, 'entity')
-				.where('EXTRACT(MONTH FROM entity.date) = :month', { month: request.month })
+        .where('entity.userId = :userId', { userId: request.userId })
+				.andWhere('EXTRACT(MONTH FROM entity.date) = :month', { month: request.month })
 				.andWhere('EXTRACT(YEAR FROM entity.date) = :year', { year: request.year })
 				.getMany();
 
