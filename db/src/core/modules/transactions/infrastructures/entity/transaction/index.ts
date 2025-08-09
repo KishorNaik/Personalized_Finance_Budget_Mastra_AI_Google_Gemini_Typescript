@@ -10,6 +10,7 @@ export enum TransactionType {
 @Entity({ schema: `transaction`, name: `transactions` })
 export class TransactionEntity extends BaseEntity {
 	@Column(`enum`, { enum: TransactionType, nullable: true })
+	@IsNotEmpty()
 	public type?: TransactionType;
 
 	@Column(`decimal`, { precision: 10, scale: 2, nullable: true })
