@@ -169,10 +169,6 @@ export class CreateTransactionCommandHandler
 			},
 		});
 
-		CleanUpWrapper.run(() => {
-			this.pipeline = null;
-		});
-
 		return response;
 	}
 }
