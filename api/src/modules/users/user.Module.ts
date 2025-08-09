@@ -3,6 +3,7 @@ import { subscribeUserSharedCacheDomainEvent } from './shared/cache/events/subsc
 import { subscribeUserCreatedIntegrationEvent } from './apps/features/v1/createUsers/events';
 import { subscribeGetUserByEmailIdIntegrationEvent } from './apps/features/v1/getUserByEmailId/events';
 import { GetUserByIdentifierEndpoint } from './apps/features/v1/getUserByIdentifier/endpoint';
+import { subscribeIsUserValidIntegrationEvent } from './apps/features/v1/isUserValid';
 
 export const userModuleFederations: Function[] = [GetUserByIdentifierEndpoint];
 
@@ -10,4 +11,5 @@ export const userModuleBullMqFederation: WorkerBullMq[] = [
 	subscribeUserSharedCacheDomainEvent,
 	subscribeUserCreatedIntegrationEvent,
 	subscribeGetUserByEmailIdIntegrationEvent,
+	subscribeIsUserValidIntegrationEvent,
 ];

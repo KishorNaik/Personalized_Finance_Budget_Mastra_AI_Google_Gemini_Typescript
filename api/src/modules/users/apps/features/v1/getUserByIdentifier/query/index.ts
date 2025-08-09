@@ -25,6 +25,7 @@ import { getQueryRunner, UserEntity } from '@kishornaik/db';
 import { GetUserByIdentifierCacheService } from '@/modules/users/shared/cache/set/services/byIdentifier';
 import { NODE_ENV } from '@/config/env';
 import { GetUserByIdentifierResponseMapperService } from './services/mapResponse';
+import { TraceIdWrapper } from '@/shared/utils/helpers/traceId';
 
 // #region Query
 @sealed
@@ -32,13 +33,19 @@ export class GetUserByIdentifierQuery extends RequestData<
 	DataResponse<GetUserByIdentifierResponseDto>
 > {
 	private readonly _request: GetUserByIdentifierRequestDto;
-	public constructor(request: GetUserByIdentifierRequestDto) {
+	private readonly _traceId: string = null;
+	public constructor(request: GetUserByIdentifierRequestDto, traceId?: string) {
 		super();
 		this._request = request;
+		this._traceId = traceId;
 	}
 
 	public get request(): GetUserByIdentifierRequestDto {
 		return this._request;
+	}
+
+	public get traceId(): string {
+		return this._traceId;
 	}
 }
 // #endregion
@@ -81,6 +88,8 @@ export class GetUserByIdentifierQueryHandler
 	): Promise<DataResponse<GetUserByIdentifierResponseDto>> {
 		const queryRunner = await getQueryRunner();
 		await queryRunner.connect();
+
+		if (value?.traceId) TraceIdWrapper.setTraceId(value.traceId);
 
 		return await TransactionsWrapper.runDataResponseAsync({
 			queryRunner: queryRunner,
