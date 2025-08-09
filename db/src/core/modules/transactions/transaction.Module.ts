@@ -4,3 +4,6 @@ import { TransactionEntity } from './infrastructures/entity/transaction';
 export const transactionModulesEntityFederation: Function[] = [TransactionEntity];
 
 export * from './infrastructures/entity/transaction/index';
+
+// Service
+export * from "./apps/features/v1/addTransaction/index";
