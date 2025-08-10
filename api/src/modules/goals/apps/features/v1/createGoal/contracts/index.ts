@@ -3,7 +3,7 @@ import { IsSafeString } from '@kishornaik/utils';
 import { IsNotEmpty, IsNumber, IsString, Matches, MaxLength, Min, Validate } from 'class-validator';
 
 // #region Request Dto
-export class CreateGoalEntity {
+export class CreateGoalRequestDto {
 	@IsString()
 	@IsNotEmpty()
 	@Matches(/^\d{4}-(0[1-9]|1[0-2])$/, {
@@ -36,7 +36,7 @@ export class CreateGoalEntity {
 // #endregion
 
 // #region Response Dto
-export class CreateGoalResponse {
+export class CreateGoalResponseDto {
 	identifier?: string;
 }
 

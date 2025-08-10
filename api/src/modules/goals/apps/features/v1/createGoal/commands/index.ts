@@ -22,31 +22,28 @@ import {
 	Result,
 	CleanUpWrapper,
 } from '@kishornaik/utils';
-import { getTraceId, logger } from '@/shared/utils/helpers/loggers';
-import { AddTransactionDbService, getQueryRunner, TransactionEntity } from '@kishornaik/db';
-import { CreateTransactionRequestDto, CreateTransactionResponseDto } from '../contracts';
-import { IsUserValidIntegrationPublishEventService } from '@/shared/services/users/isUserValidPublishEvent';
 import { Request } from 'express';
+import { getTraceId, logger } from '@/shared/utils/helpers/loggers';
+import { IsUserValidIntegrationPublishEventService } from '@/shared/services/users/isUserValidPublishEvent';
 import { UserTokenProviderService } from '@/shared/services/users/userTokenProvider.service';
-import { CreateTransactionEntityMapperService } from './services/mapEntity';
-
-Container.set<AddTransactionDbService>(AddTransactionDbService, new AddTransactionDbService());
+import { AddGoalDbService, getQueryRunner, GoalEntity } from '@kishornaik/db';
+import { CreateGoalRequestDto, CreateGoalResponseDto } from '../contracts';
+import { CreateGoalRequestEntityMapperService } from './services/mapEntity';
+import { CreateGoalDbService } from './services/db';
 
 // #region Command
 @sealed
-export class CreateTransactionCommand extends RequestData<
-	DataResponse<CreateTransactionResponseDto>
-> {
+export class CreateGoalCommand extends RequestData<DataResponse<CreateGoalResponseDto>> {
 	private readonly _requestExpress: Request;
-	private readonly _request: CreateTransactionRequestDto;
+	private readonly _request: CreateGoalRequestDto;
 
-	public constructor(requestExpress: Request, request: CreateTransactionRequestDto) {
+	public constructor(requestExpress: Request, request: CreateGoalRequestDto) {
 		super();
 		this._requestExpress = requestExpress;
 		this._request = request;
 	}
 
-	public get request(): CreateTransactionRequestDto {
+	public get request(): CreateGoalRequestDto {
 		return this._request;
 	}
 
@@ -54,6 +51,7 @@ export class CreateTransactionCommand extends RequestData<
 		return this._requestExpress;
 	}
 }
+
 // #endregion
 
 // #region Pipeline Steps
@@ -64,34 +62,33 @@ enum pipelineSteps {
 	SAVE_TRANSACTION = `saveTransaction`,
 	MAP_RESPONSE = `mapResponse`,
 }
+
 // #endregion
 
 // #region Command Handler
 @sealed
-@requestHandler(CreateTransactionCommand)
-export class CreateTransactionCommandHandler
-	implements RequestHandler<CreateTransactionCommand, DataResponse<CreateTransactionResponseDto>>
+@requestHandler(CreateGoalCommand)
+export class CreateGoalCommandHandler
+	implements RequestHandler<CreateGoalCommand, DataResponse<CreateGoalResponseDto>>
 {
 	private pipeline = new PipelineWorkflow(logger);
 	private readonly _getUserIdFromRequestService: UserTokenProviderService;
 	private readonly _isUserValidIntegrationPublishEventService: IsUserValidIntegrationPublishEventService;
-	private readonly _createTransactionEntityMapperService: CreateTransactionEntityMapperService;
-	private readonly _transactionDbService: AddTransactionDbService;
+	private readonly _createGoalRequestEntityMapperService: CreateGoalRequestEntityMapperService;
+	private readonly _createGoalDbService: CreateGoalDbService;
 
 	public constructor() {
 		this._getUserIdFromRequestService = Container.get(UserTokenProviderService);
 		this._isUserValidIntegrationPublishEventService = Container.get(
 			IsUserValidIntegrationPublishEventService
 		);
-		this._createTransactionEntityMapperService = Container.get(
-			CreateTransactionEntityMapperService
+		this._createGoalRequestEntityMapperService = Container.get(
+			CreateGoalRequestEntityMapperService
 		);
-		this._transactionDbService = Container.get(AddTransactionDbService);
+		this._createGoalDbService = Container.get(CreateGoalDbService);
 	}
 
-	public async handle(
-		value: CreateTransactionCommand
-	): Promise<DataResponse<CreateTransactionResponseDto>> {
+	public async handle(value: CreateGoalCommand): Promise<DataResponse<CreateGoalResponseDto>> {
 		const queryRunner = getQueryRunner();
 		await queryRunner.connect();
 
@@ -100,7 +97,7 @@ export class CreateTransactionCommandHandler
 			onTransaction: async () => {
 				const { request, requestExpress } = value;
 
-				// Guard Clause
+				// Guard
 				const guardResult = new GuardWrapper()
 					.check(request, 'request')
 					.check(requestExpress, 'requestExpress')
@@ -111,7 +108,7 @@ export class CreateTransactionCommandHandler
 						guardResult.error.message
 					);
 
-				// Get User Identifier from the request
+				// Get User identifier from the express request Object Pipeline workflow
 				await this.pipeline.step(pipelineSteps.GET_USER_ID_FROM_REQUEST, async () => {
 					const result =
 						await this._getUserIdFromRequestService.getUserId(requestExpress);
@@ -120,7 +117,7 @@ export class CreateTransactionCommandHandler
 					return ResultFactory.success(result);
 				});
 
-				// Is User Valid Pipeline Workflow
+				// Is User Valid Pipeline workflow
 				await this.pipeline.step(pipelineSteps.IS_USER_VALID, async () => {
 					const userIdentifierResult = this.pipeline.getResult<string>(
 						pipelineSteps.GET_USER_ID_FROM_REQUEST
@@ -131,37 +128,45 @@ export class CreateTransactionCommandHandler
 					});
 				});
 
-				// Map Request Entity
+				// Map Request Entity Pipeline workflow
 				await this.pipeline.step(pipelineSteps.MAP_REQUEST_ENTITY, async () => {
 					const userIdentifierResult = this.pipeline.getResult<string>(
 						pipelineSteps.GET_USER_ID_FROM_REQUEST
 					);
-					return await this._createTransactionEntityMapperService.handleAsync({
-						request,
+					return await this._createGoalRequestEntityMapperService.handleAsync({
+						request: request,
 						userId: userIdentifierResult,
 					});
 				});
 
-				// Save Transaction
+				// Save Transaction Pipeline workflow
 				await this.pipeline.step(pipelineSteps.SAVE_TRANSACTION, async () => {
-					const entityResult = this.pipeline.getResult<TransactionEntity>(
+					const entityResult = this.pipeline.getResult<GoalEntity>(
 						pipelineSteps.MAP_REQUEST_ENTITY
 					);
-					return await this._transactionDbService.handleAsync(entityResult, queryRunner);
+					return await this._createGoalDbService.handleAsync({
+						entity: entityResult,
+						queryRunner: queryRunner,
+					});
 				});
 
-				// Map Response
-				await this.pipeline.step(pipelineSteps.MAP_RESPONSE, async () => {
-					const transactionResult = this.pipeline.getResult<TransactionEntity>(
-						pipelineSteps.SAVE_TRANSACTION
-					);
-					const transactionResponseDto = new CreateTransactionResponseDto();
-					transactionResponseDto.identifier = transactionResult.identifier;
-					return ResultFactory.success(transactionResponseDto);
-				});
+				// Map Response Pipeline workflow
+				await this.pipeline.step<CreateGoalResponseDto>(
+					pipelineSteps.MAP_RESPONSE,
+					async () => {
+						const entityResult = this.pipeline.getResult<GoalEntity>(
+							pipelineSteps.MAP_REQUEST_ENTITY
+						);
+						if (!entityResult)
+							return ResultFactory.error(StatusCodes.NOT_FOUND, `Goal not found`);
+						const response = new CreateGoalResponseDto();
+						response.identifier = entityResult.identifier;
+						return ResultFactory.success(response);
+					}
+				);
 
-				// Return
-				const response = this.pipeline.getResult<CreateTransactionResponseDto>(
+				// return
+				const response = this.pipeline.getResult<CreateGoalResponseDto>(
 					pipelineSteps.MAP_RESPONSE
 				);
 				return DataResponseFactory.success(StatusCodes.CREATED, response);
@@ -171,4 +176,5 @@ export class CreateTransactionCommandHandler
 		return response;
 	}
 }
+
 // #endregion
