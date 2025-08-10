@@ -35,10 +35,12 @@ describe(`Get-Transaction-By-Month-Years-Unit-Test`, () => {
 		dto.status = StatusEnum.ACTIVE;
 
 		await queryRunner.startTransaction();
-		const addTransactionResult = await new GetTransactionsByMonthAndYearDbService().handleAsync({
-			queryRunner: queryRunner,
-			request: dto,
-		});
+		const addTransactionResult = await new GetTransactionsByMonthAndYearDbService().handleAsync(
+			{
+				queryRunner: queryRunner,
+				request: dto,
+			}
+		);
 		if (addTransactionResult.isErr()) {
 			await queryRunner.rollbackTransaction();
 			expect(true).toBe(false);

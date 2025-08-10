@@ -2,6 +2,7 @@ import { DataSource, QueryRunner, SelectQueryBuilder } from '@kishornaik/utils';
 import { DB_DATABASE, DB_HOST, DB_PASSWORD, DB_PORT, DB_USERNAME } from '../env';
 import { userModulesEntityFederation } from '../../modules/users/user.Module';
 import { transactionModulesEntityFederation } from '../../modules/transactions/transaction.Module';
+import { goalModuleEntityFederations } from '../../modules/app.Module';
 
 export const dbDataSource = new DataSource({
 	type: 'postgres',
@@ -12,7 +13,11 @@ export const dbDataSource = new DataSource({
 	database: DB_DATABASE,
 	synchronize: false,
 	logging: true,
-	entities: [...userModulesEntityFederation, ...transactionModulesEntityFederation],
+	entities: [
+		...userModulesEntityFederation,
+		...transactionModulesEntityFederation,
+		...goalModuleEntityFederations,
+	],
 	subscribers: [],
 	migrations: ['src/migration/**/*.ts'],
 	extra: {

@@ -1,6 +1,6 @@
 import { Column, CreateDateColumn, Entity, Index, IsSafeString, OneToOne } from '@kishornaik/utils';
 import { BaseEntity } from '../../../../../shared/entity/base';
-import { IsNotEmpty, IsString, IsNumber } from 'class-validator';
+import { IsNotEmpty, IsString, IsNumber, MaxLength } from 'class-validator';
 
 export enum TransactionType {
 	INCOME = 'income',
@@ -39,6 +39,7 @@ export class TransactionEntity extends BaseEntity {
 	@IsNotEmpty()
 	@IsString()
 	@IsSafeString()
+	@MaxLength(100)
 	public category?: string;
 
 	@Column(`varchar`, { length: 100, nullable: true })

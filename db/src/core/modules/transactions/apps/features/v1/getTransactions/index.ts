@@ -52,7 +52,9 @@ export interface IGetTransactionByMonthAndYearsDbService
 
 @sealed
 @Service()
-export class GetTransactionsByMonthAndYearDbService implements IGetTransactionByMonthAndYearsDbService {
+export class GetTransactionsByMonthAndYearDbService
+	implements IGetTransactionByMonthAndYearsDbService
+{
 	private readonly _dtoValidationService: DtoValidation<GetTransactionsFilterDto>;
 
 	public constructor() {

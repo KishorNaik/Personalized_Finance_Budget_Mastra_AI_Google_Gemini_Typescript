@@ -8,6 +8,7 @@ import { DB_DATABASE, DB_HOST, DB_PASSWORD, DB_PORT, DB_USERNAME } from '../env'
 import { UserEntity } from '../../modules/users/infrastructures/entity/users/index';
 import { UserCredentialsEntity } from '../../modules/users/infrastructures/entity/credentials/index';
 import { TransactionEntity } from '../../modules/transactions/infrastructures/entity/transaction/index';
+import { GoalEntity } from '../../modules/goals/infrastructures/entity/goals/index';
 
 /*
     Generate:
@@ -24,7 +25,7 @@ const connectionOptions: DataSourceOptions = {
 	database: DB_DATABASE,
 	synchronize: false,
 	logging: true,
-	entities: [UserEntity, UserCredentialsEntity, TransactionEntity],
+	entities: [UserEntity, UserCredentialsEntity, TransactionEntity, GoalEntity],
 	subscribers: [],
 	migrations: ['src/core/config/dbMigrations/migrations/**/*.ts'],
 	migrationsTableName: 'custom_migration_table',
