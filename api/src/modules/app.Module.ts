@@ -9,12 +9,14 @@ import {
 import { userModuleBullMqFederation, userModuleFederations } from './users/user.Module';
 import { authModuleFederations } from './auth/auth.Module';
 import { transactionModuleFederation } from './transactions/transaction.Module';
+import { goalModuleFederations } from './goals/goal.Module';
 
 // REST API
 const restApiModulesFederation: Function[] = [
 	...userModuleFederations,
 	...authModuleFederations,
 	...transactionModuleFederation,
+	...goalModuleFederations,
 ];
 
 // TRPC

@@ -29,8 +29,8 @@ describe(`Get-Transaction-Unit-Test`, () => {
 
 		// Request
 		const requestDto: GetTransactionsRequestDto = new GetTransactionsRequestDto();
-		requestDto.month=8;
-    requestDto.year=2025;
+		requestDto.month = 8;
+		requestDto.year = 2025;
 
 		// Endpoint
 		const endpoint = `/api/v1/transactions?month=${requestDto.month}&year=${requestDto.year}`;
@@ -41,9 +41,7 @@ describe(`Get-Transaction-Unit-Test`, () => {
 			algorithm: 'HS256',
 		});
 
-		const response = await request(app)
-			.get(endpoint)
-			.set('authorization', `Bearer ${token}`);
+		const response = await request(app).get(endpoint).set('authorization', `Bearer ${token}`);
 
 		if (response.status !== 200) {
 			console.log(`error: ${JSON.stringify(response.body)}`);
