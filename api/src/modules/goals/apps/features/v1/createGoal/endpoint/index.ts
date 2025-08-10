@@ -19,7 +19,7 @@ import { CreateGoalCommand } from '../commands';
 
 @JsonController(`/api/v1/goals`)
 @OpenAPI({ tags: [`goals`] })
-export class CreateTransactionEndpoint {
+export class CreateGoalEndpoint {
 	@Post()
 	@OpenAPI({
 		summary: `create a goal in the system.`,

@@ -1,3 +1,3 @@
-import { CreateGoalRequestDto } from './apps/features/v1/createGoal';
+import { CreateGoalEndpoint } from './apps/features/v1/createGoal/endpoint';
 
-export const goalModuleFederations: Function[] = [CreateGoalRequestDto];
+export const goalModuleFederations: Function[] = [CreateGoalEndpoint];
