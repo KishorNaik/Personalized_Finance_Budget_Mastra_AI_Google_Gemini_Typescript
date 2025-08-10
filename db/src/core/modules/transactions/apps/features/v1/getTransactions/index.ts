@@ -94,8 +94,8 @@ export class GetTransactionsByMonthAndYearDbService implements IGetTransactionBy
 				.andWhere('entity.status = :status', { status: request.status })
 				.andWhere('EXTRACT(MONTH FROM entity.date) = :month', { month: request.month })
 				.andWhere('EXTRACT(YEAR FROM entity.date) = :year', { year: request.year })
-        .orderBy('entity.date', 'ASC')
-        .addOrderBy('entity.id', 'ASC')
+				.orderBy('entity.date', 'ASC')
+				.addOrderBy('entity.id', 'ASC')
 				.getMany();
 
 			if (!result || result.length === 0)
