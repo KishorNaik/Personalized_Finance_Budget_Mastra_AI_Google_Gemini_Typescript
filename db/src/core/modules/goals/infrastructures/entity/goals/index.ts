@@ -47,7 +47,6 @@ export class GoalEntity extends BaseEntity {
 		{ message: 'limit must be a number with up to 2 decimal places' }
 	)
 	@Min(0)
-	@Validate(LimitNotExceedSavingsGoal)
 	public limit?: number;
 
 	@Column({ type: 'decimal', precision: 12, scale: 2, nullable: true })
@@ -56,6 +55,7 @@ export class GoalEntity extends BaseEntity {
 		{ message: 'savingsGoal must be a number with up to 2 decimal places' }
 	)
 	@Min(0)
+	@Validate(LimitNotExceedSavingsGoal)
 	public savingsGoal?: number;
 
 	@Column(`varchar`, { length: 100, nullable: true })
