@@ -9,7 +9,6 @@ import { getRandomValues, randomUUID } from 'node:crypto';
 import { BoolEnum, StatusEnum } from '@kishornaik/utils';
 import expect from 'expect';
 import { GetGoalDbService, GetGoalFilterDto, GoalEntity } from '../../../../goals.Module';
-import { AddGoalDbService } from '../../../../apps/features/v1/addGoals';
 
 describe(`Get-Goal-Unit-Test`, () => {
 	let queryRunner: QueryRunner;
