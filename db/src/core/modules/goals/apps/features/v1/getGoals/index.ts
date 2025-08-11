@@ -95,7 +95,7 @@ export class GetGoalDbService implements IGetGoalsDbService {
 				.andWhere("EXTRACT(YEAR FROM TO_DATE(entity.targetMonth, 'YYYY-MM')) = :year", {
 					year: request.year,
 				})
-				.orderBy('entity.date', 'ASC')
+				.orderBy('entity.targetMonth', 'ASC')
 				.addOrderBy('entity.id', 'ASC')
 				.getMany();
 
